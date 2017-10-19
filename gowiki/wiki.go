@@ -1,10 +1,10 @@
 package main
 
 import (
-	"html/template"
-	"io/ioutil"
-    "net/http"
-    "regexp"
+  	"html/template"
+  	"io/ioutil"
+  	"net/http"
+  	"regexp"
 )
 
 type Page struct {
@@ -13,12 +13,12 @@ type Page struct {
 }
 
 func (p *Page) save() error {
-  	filename := p.Title + ".txt"
+  	filename := "data/" + p.Title + ".txt"
   	return ioutil.WriteFile(filename, p.Body, 0600)
 }
 
 func loadPage(title string) (*Page, error) {
-  	filename := title + ".txt"
+  	filename := "data/" + title + ".txt"
   	body, err := ioutil.ReadFile(filename)
   	if err != nil {
   		return nil, err
@@ -54,7 +54,7 @@ func saveHandler(w http.ResponseWriter, r *http.Request, title string) {
   	http.Redirect(w, r, "/view/"+title, http.StatusFound)
 }
 
-var templates = template.Must(template.ParseFiles("edit.html", "view.html"))
+var templates = template.Must(template.ParseFiles("tmpl/edit.html", "tmpl/view.html"))
 
 func renderTemplate(w http.ResponseWriter, tmpl string, p *Page) {
   	err := templates.ExecuteTemplate(w, tmpl+".html", p)
@@ -80,5 +80,5 @@ func main() {
   	http.HandleFunc("/view/", makeHandler(viewHandler))
   	http.HandleFunc("/edit/", makeHandler(editHandler))
   	http.HandleFunc("/save/", makeHandler(saveHandler))
-	http.ListenAndServe(":8080", nil)
+  	http.ListenAndServe(":8080", nil)
 }
